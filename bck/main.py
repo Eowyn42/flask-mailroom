@@ -32,6 +32,8 @@ def create():
         Donation.update(value=request.form['value'])\
                 .where(Donation.donor == request.form['donor'])\
                 .execute()
+       #donation = Donation(value=request.form['value'], donor=request.form['donor'])
+       #donation.save()
         return(redirect(url_for('all')))
 
     # If the handler receives a GET request, then it should render
