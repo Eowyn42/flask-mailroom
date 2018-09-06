@@ -29,12 +29,12 @@ def create():
         # donor and donation amount. Then it should redirect
         # the visitor to the home page.
     if request.method == 'POST':
-       # Donation.update(value=request.form['value'])\
-       #         .where(Donation.donor == request.form['donor'])\
-       #         .execute()
-       donation = Donation(value=request.form['value'], donor=request.form['donor'])
-       donation.save()
-       return(redirect(url_for('all')))
+        Donation.update(value=request.form['value'])\
+                .where(Donation.donor == request.form['donor'])\
+                .execute()
+       #donation = Donation(value=request.form['value'], donor=request.form['donor'])
+       #donation.save()
+        return(redirect(url_for('all')))
 
     # If the handler receives a GET request, then it should render
     # the template for the donation creation page.
