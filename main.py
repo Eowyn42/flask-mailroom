@@ -29,9 +29,30 @@ def create():
         # donor and donation amount. Then it should redirect
         # the visitor to the home page.
     if request.method == 'POST':
-        Donation.update(value=request.form['value'])\
-                .where(Donation.donor == request.form['donor'])\
-                .execute()
+
+        #Attempt E: the first line works, second fails on NotNull integrity
+        #gift = Donation(value=request.form['value'], donor=request.form['donor'])
+        #gift.create()
+
+        # Attempt D:
+        #donor = Donation.donor(name=request.form['donor'])
+        #gift = Donation(value=request.form['value'], donor=donor)
+
+        # Attempt C:
+        #Donation.create(value=request.form['value'], donor=request.form['donor'])
+
+        # Attempt B: This one got the closest, but the save/create part fails
+        #donor = session.get(Donation.donor.name == request.form['donor'])
+        #Donation(value=request.form['value'], donor=donor).create()
+
+        # Attempt B2: Also really close; can instantiate but not save
+        # peewee.IntegrityError: NOT NULL constraint failed: donation.donor_id
+        Donation(value=request.form['value'],
+                 donor=session
+                 .get(Donation.donor.name == request.form['donor'])).save()
+
+        # Attempt A:
+        #Donation.create(value=request.form['value']).where(session.get(Donation.donor.name) == request.form['donor'])
         return(redirect(url_for('all')))
 
     # If the handler receives a GET request, then it should render
