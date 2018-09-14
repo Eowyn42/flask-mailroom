@@ -48,7 +48,7 @@ def create():
         # Attempt B2: Also really close; can instantiate but not save
         # peewee.IntegrityError: NOT NULL constraint failed: donation.donor_id
         #donor_id = Donation.get(donor == request.form['donor']).donor_id
-        name = request.form['name']
+        name = request.form['donor']
         value = request.form['value']
         existingdonor = Donor.select().where(Donor.name == name).get()
         Donation(donor=existingdonor, value = value).save()
