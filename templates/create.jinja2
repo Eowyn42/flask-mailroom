@@ -7,6 +7,7 @@
     {% if error %}<p>{{ error }}</p>{% endif %}
     <label for="donor">Donor Name:</label><input id="donor" type="text" name="donor"><br>
     <label for="value">Value:</label><input id="value" type="number" name="value"><br>
+    <input type="hidden" name="donor_id" value="{{ donor_id }}">
     <input type="submit" value="Create Donation">
 </form>
 {% endblock content %}

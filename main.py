@@ -47,9 +47,15 @@ def create():
 
         # Attempt B2: Also really close; can instantiate but not save
         # peewee.IntegrityError: NOT NULL constraint failed: donation.donor_id
-        Donation(value=request.form['value'],
-                 donor=session
-                 .get(Donation.donor.name == request.form['donor'])).save()
+        #donor_id = Donation.get(donor == request.form['donor']).donor_id
+        name = request.form['name']
+        value = request.form['value']
+        existingdonor = Donor.select().where(Donor.name == name).get()
+        Donation(donor=existingdonor, value = value).save()
+        #Donation(value=request.form['value'], donor_id = request.form['donor_id']).save()
+        #Donation.update(value=request.form['value'], donor_id=donor_id)\
+        #    .where(Donation.donor == request.form['donor'])\
+        #    .execute()
 
         # Attempt A:
         #Donation.create(value=request.form['value']).where(session.get(Donation.donor.name) == request.form['donor'])
@@ -63,5 +69,5 @@ def create():
 if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 6738))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
 
