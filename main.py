@@ -4,6 +4,8 @@ import base64
 from flask import Flask, render_template, request, redirect, url_for, session
 
 from model import Donation, Donor
+# from model import *
+from peewee import DoesNotExist
 
 app = Flask(__name__)
 
@@ -29,36 +31,17 @@ def create():
         # donor and donation amount. Then it should redirect
         # the visitor to the home page.
     if request.method == 'POST':
-
-        #Attempt E: the first line works, second fails on NotNull integrity
-        #gift = Donation(value=request.form['value'], donor=request.form['donor'])
-        #gift.create()
-
-        # Attempt D:
-        #donor = Donation.donor(name=request.form['donor'])
-        #gift = Donation(value=request.form['value'], donor=donor)
-
-        # Attempt C:
-        #Donation.create(value=request.form['value'], donor=request.form['donor'])
-
-        # Attempt B: This one got the closest, but the save/create part fails
-        #donor = session.get(Donation.donor.name == request.form['donor'])
-        #Donation(value=request.form['value'], donor=donor).create()
-
-        # Attempt B2: Also really close; can instantiate but not save
-        # peewee.IntegrityError: NOT NULL constraint failed: donation.donor_id
-        #donor_id = Donation.get(donor == request.form['donor']).donor_id
         name = request.form['donor']
         value = request.form['value']
-        existingdonor = Donor.select().where(Donor.name == name).get()
-        Donation(donor=existingdonor, value = value).save()
-        #Donation(value=request.form['value'], donor_id = request.form['donor_id']).save()
-        #Donation.update(value=request.form['value'], donor_id=donor_id)\
-        #    .where(Donation.donor == request.form['donor'])\
-        #    .execute()
+        try:
+            existingdonor = Donor.select().where(Donor.name == name).get()
+            Donation(donor=existingdonor, value=value).save()
+        except DoesNotExist:
+            # Create a new donor if this person does not exist
+            print("Adding new donor.")
+            newdonor = Donor.create(name=name)
+            Donation(donor=newdonor, value=value).save()
 
-        # Attempt A:
-        #Donation.create(value=request.form['value']).where(session.get(Donation.donor.name) == request.form['donor'])
         return(redirect(url_for('all')))
 
     # If the handler receives a GET request, then it should render
